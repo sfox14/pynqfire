@@ -27,15 +27,22 @@
 #   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 #   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""
-Package for FIR bitstream
-"""
+from cffi import FFI
+ffibuilder = FFI()
 
-from . import general_const
-from ._example import ffi, lib
-from .fir_abi import fir
-from .fir_api import fir_api
+ffibuilder.set_source("_example",
+   r""" // passed to the real C compiler,
+        // contains implementation of things declared in cdef()
+    """,
+    libraries=[], extra_objects=["/home/xilinx/fir/libfir.so"])
+# or a list of libraries to link with
+    # (more arguments like setup.py's Extension class:
+    # include_dirs=[..], extra_objects=[..], and so on)
 
+ffibuilder.cdef("""
+    // declarations that are shared between Python and C  
+    void _p0_cpp_FIR_1_noasync(int *x, int w[85], int *ret, int datalen);
+""")
 
-__all__ =['fir']
-__version__ = 0.2
+if __name__ == "__main__":
+    ffibuilder.compile(verbose=True)

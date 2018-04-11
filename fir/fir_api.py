@@ -27,13 +27,14 @@
 #   OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 #   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import cffi
+from fir import ffi, lib
+
 from fir import general_const
 from pynq import Overlay,PL,Xlnk
 
 fir_overlay = None
 
-class fir():
+class fir_api():
     """Class which controls fir filter hardware
 
     Attributes
@@ -51,11 +52,7 @@ class fir():
 
     def __init__(self):
         self.bitfile = general_const.BITFILE
-        self.libfile = general_const.LIBRARY
         self.nshift_reg = 85
-        ffi = cffi.FFI()
-        ffi.cdef("void _p0_cpp_FIR_1_noasync(int *x, int w[85], int *ret, int datalen);")
-        self.lib = ffi.dlopen(self.libfile)
         self.xlnk = Xlnk()
         if PL.bitfile_name != self.bitfile:
                 self.download_bitstream()
@@ -108,7 +105,7 @@ class fir():
         """
         if any("cdata" not in elem for elem in [str(datain),str(win),str(dataout)]):
                 raise RuntimeError("Unknown buffer type!")
-        self.lib._p0_cpp_FIR_1_noasync(datain,win,dataout,datalen)
+        lib._p0_cpp_FIR_1_noasync(datain,win,dataout,datalen)
         
 
     def mem_init(self, buflen):
@@ -123,4 +120,14 @@ class fir():
         din = self.mem_init(100)
         w = self.mem_init(85)
         dout = self.mem_init(100)
-        self.lib._p0_cpp_FIR_1_noasync(din,w,dout,100)
+        lib._p0_cpp_FIR_1_noasync(din,w,dout,100)
+
+"""
+if __name__ == "__main__":
+
+    print("setup")
+    fir = fir_api()
+    print("reset")
+    fir.reset()
+    print("done")
+"""
