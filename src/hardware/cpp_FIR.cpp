@@ -94,8 +94,8 @@ void cpp_FIR(data_t x[B], coef_t w[N], data_t ret[B], data_t datalen)
   }
 
 #include "cf_stub.h"
-extern "C" void _p0_cpp_FIR_1_noasync(data_t x[500000], coef_t w[85], data_t ret[500000], data_t datalen);
-extern "C" void _p0_cpp_FIR_1_noasync(data_t x[500000], coef_t w[85], data_t ret[500000], data_t datalen)
+void _p0_cpp_FIR_1_noasync(data_t *x, coef_t w[85], data_t *ret, data_t datalen);
+void _p0_cpp_FIR_1_noasync(data_t *x, coef_t w[85], data_t *ret, data_t datalen)
 {
   switch_to_next_partition(0);
   int start_seq[1];
